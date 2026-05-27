@@ -6,10 +6,12 @@
     <title>Demo Django + Tailwind</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 min-h-screen text-slate-100">
+<body class="bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 ...">
 
     <header class="container mx-auto px-6 py-12">
-        <nav class="flex items-center justify-between">
+        <nav class="flex items-center justify-between"> 
+            <a href="/sobre/" class="text-sm text-slate-300 hover:text-white transition">/sobre</a>
+            
             <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span class="font-mono text-sm text-slate-300">demo-django</span>
@@ -64,6 +66,7 @@
                         <li class="border-l-2 border-emerald-400 pl-4 py-1">
                             <h3 class="font-semibold">{{ m.titulo }}</h3>
                             <p class="text-sm text-slate-300">{{ m.conteudo }}</p>
+                            <span class="text-xs text-slate-400">por {{ m.autor }}</span>  #atualizacao para parte 2
                             <span class="text-xs text-slate-500">{{ m.criada_em|date:"d/m/Y H:i" }}</span>
                         </li>
                     {% endfor %}
