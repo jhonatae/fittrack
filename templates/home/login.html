@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTrack - Entrar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
+
+    <header class="w-full bg-slate-950">
+        <div class="max-w-4xl mx-auto px-6 py-6 flex items-center justify-between">
+            <div class="font-bold text-lg tracking-wide text-slate-200">
+                <a href="{% url 'index' %}">FitTrack<span class="text-emerald-400">.</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-md mx-auto px-6 py-12 w-full flex flex-col justify-center">
+        <div class="space-y-6">
+            <div class="text-center">
+                <h1 class="text-2xl font-bold text-slate-100">Acesse sua conta</h1>
+                <p class="text-sm text-slate-400 mt-1">Insira seu usuário e senha cadastrados no sistema.</p>
+            </div>
+
+            <form method="POST" class="space-y-5">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-slate-300">
+                            {% if field.name == 'username' %}Usuário{% else %}Senha{% endif %}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-xs text-red-400">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                    <p class="text-sm text-red-400 text-center">{{ form.non_field_errors.0 }}</p>
+                {% endif %}
+
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-sm font-bold py-2.5 rounded-lg transition shadow-lg shadow-emerald-500/10 mt-4">
+                    Entrar   
+                </button>
+                <p class="text-center text-sm text-slate-400 mt-4">
+                    Criar conta <a href="{% url 'cadastrar_usuario' %}" class="text-emerald-400 hover:underline">Cadastre-se</a>
+                </p> 
+            </form>
+        </div>
+    </main>
+
+    <footer class="w-full border-t border-white/10 py-6 bg-slate-950 text-center text-slate-500 text-xs">
+        FitTrack · Disciplina de Programação Web
+    </footer>
+
+</body>
+</html>
