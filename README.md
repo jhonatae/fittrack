@@ -17,7 +17,7 @@ O projeto foi estruturado seguindo o padrão MVT (Model-View-Template) do Django
 
 ---
 
-## 🚀 Como Rodar o Projeto com o Docker
+### Como Rodar o Projeto com o Docker
 
 Siga as instruções abaixo para clonar, configurar e executar o ambiente de desenvolvimento na sua máquina local.
 
@@ -29,7 +29,7 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 ### 1. Clonar o Repositório
 
 Abra o seu terminal e execute o comando para clonar o projeto na branch principal:
-```bash
+
 git clone [https://github.com/jhonatae/fittrack.git](https://github.com/jhonatae/fittrack.git)
 cd fittrack/demo-django
 
@@ -39,9 +39,10 @@ docker compose up -d
 
 
 ### 3. Criar a Estrutura do Banco de Dados (Migrations)
+
 Com os containers rodando, execute os comandos do Django para gerar os arquivos de histórico e aplicar as tabelas estruturais no banco de dados SQLite:
 
-Bash
+
 # Gerar arquivos de migração para a app treinos
 docker compose exec web python manage.py makemigrations
 
