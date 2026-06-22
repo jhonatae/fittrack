@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Exercício · FitTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 min-h-screen text-slate-100 flex items-center justify-center p-6">
+
+    <div class="bg-slate-800/50 backdrop-blur-md p-8 rounded-2xl border border-red-500/30 w-full max-w-md text-center">
+        <h1 class="text-2xl font-bold mb-4 text-red-400">Excluir Exercício</h1>
+        <p class="text-slate-300 mb-6">Tem certeza de que deseja apagar o exercício de <br><strong class="text-white">"{{ exercicio.nome }}"</strong>?</p>
+        
+        <form method="POST" class="flex items-center justify-center gap-4">
+            {% csrf_token %}
+            <a href="{% url 'index' %}" class="text-slate-400 hover:text-white transition">Cancelar</a>
+            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-lg transition">Remover permanentemente</button>
+        </form>
+    </div>
+
+</body>
+</html>

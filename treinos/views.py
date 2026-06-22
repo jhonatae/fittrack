@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import UserCreationForm # <- ESTA LINHA ESTÁ FALTANDO!
 from .models import Mensagem, Exercicio
@@ -65,6 +65,43 @@ def login_usuario(request):
     else:
         form = LoginForm()
     return render(request, 'home/login.html', {'form': form})
+
+def editar_exercicio(request, pk):
+    # Garante que só quem está logado pode acessar
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    # Busca o exercício pelo ID, garantindo que pertença ao usuário logado
+    exercicio = get_object_or_404(Exercicio, pk=pk, usuario=request.user)
+
+    if request.method == "POST":
+        # Passamos a instância atual para o form saber que deve ATUALIZAR, e não criar um novo
+        form = ExercicioForm(request.POST, instance=exercicio)
+        if form.is_valid():
+            form.save()
+            return redirect("index")
+    else:
+        # Preenche o formulário com os dados atuais do exercício
+        form = ExercicioForm(instance=exercicio)
+
+    return render(request, "home/cadastrar_exercicio.html", {"form": form})
+
+
+def deletar_exercicio(request, pk):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    # Busca o exercício garantindo a segurança de que pertence ao dono da sessão
+    exercicio = get_object_or_404(Exercicio, pk=pk, usuario=request.user)
+
+    if request.method == "POST":
+        exercicio.delete()
+        return redirect("index")
+
+    # Reaproveitaremos a lógica de confirmação simples de deleção
+    return render(
+        request, "home/confirmar_exclusao.html", {"exercicio": exercicio}
+    )
 
 def logout_usuario(request):
     auth_logout(request)
