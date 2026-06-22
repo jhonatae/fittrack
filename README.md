@@ -33,9 +33,9 @@ Abra o seu terminal e execute o comando para clonar o projeto na branch principa
 git clone [https://github.com/jhonatae/fittrack.git](https://github.com/jhonatae/fittrack.git)
 cd fittrack/demo-django
 
-### 2. Clonar o Repositório
+### 2. Build e docker compose
 
-docker compose up -d
+docker compose up --build -d
 
 
 ### 3. Criar a Estrutura do Banco de Dados (Migrations)
@@ -43,10 +43,10 @@ docker compose up -d
 Com os containers rodando, execute os comandos do Django para gerar os arquivos de histórico e aplicar as tabelas estruturais no banco de dados SQLite:
 
 
-# Gerar arquivos de migração para a app treinos
+# Gerar arquivos de migração para a app treinos (opcional para detectar alterações)
 docker compose exec web python manage.py makemigrations
 
-# Aplicar as tabelas no banco de dados
+# Aplicar as tabelas no banco de dados 
 docker compose exec web python manage.py migrate
 
 ### 4. Criar um Usuário Administrador (Superuser)
