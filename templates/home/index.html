@@ -92,6 +92,13 @@
                             {% endif %}
                             <span class="text-xs text-slate-400">por {{ m.autor }}</span>
                             <span class="text-xs text-slate-500">{{ m.criada_em|date:"d/m/Y H:i" }}</span>
+                            <div class="flex gap-3 mt-1">                                            {# ← novo #}
+                                <a href="{% url 'editar_mensagem' m.id %}"
+                                   class="text-xs text-indigo-300 hover:text-indigo-200 underline">editar</a>
+                                <a href="{% url 'remover_mensagem' m.id %}"
+                                class="text-xs text-red-400 hover:text-red-300 underline">remover</a>
+                            </div>
+
                         </li>
                     {% endfor %}
                 </ul>
