@@ -71,6 +71,15 @@
                                 </span>
                             {% endif %}
                             <p class="text-sm text-slate-300">{{ m.conteudo }}</p>
+                            {% if m.tags.all %}                                          {# ← novo #}
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                    {% for tag in m.tags.all %}
+                                        <span class="inline-block px-2 py-0.5 bg-emerald-500/15 text-emerald-300 text-xs rounded">
+                                            #{{ tag.nome }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                             <span class="text-xs text-slate-400">por {{ m.autor }}</span>
                             <span class="text-xs text-slate-500">{{ m.criada_em|date:"d/m/Y H:i" }}</span>
                         </li>
