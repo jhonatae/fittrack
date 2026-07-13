@@ -10,4 +10,6 @@ urlpatterns = [
     path('cadastro/', views.cadastrar_usuario, name='cadastrar_usuario'),
     path("editar/<int:pk>/", views.editar_exercicio, name="editar_exercicio"),
     path("deletar/<int:pk>/", views.deletar_exercicio, name="deletar_exercicio"),
+    path('fichas/nova/', views.montar_ficha, name='montar_ficha'),
+    path('fichas/deletar/<int:pk>/', views.deletar_ficha, name='deletar_ficha'),
 ]

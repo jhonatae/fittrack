@@ -3,21 +3,87 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.forms import UserCreationForm # <- ESTA LINHA ESTÁ FALTANDO!
 from .models import Mensagem, Exercicio
 from .forms import ExercicioForm, LoginForm
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Exercicio, FichaTreino, ItemFichaTreino
 
-def index(request):
-    mensagens = Mensagem.objects.all()
+
+
+@login_required
+def montar_ficha(request):
+    exercicios_usuario = Exercicio.objects.filter(usuario=request.user)
     
-    # SE ESTIVER LOGADO, FILTRA APENAS OS EXERCÍCIOS DELE. SE NÃO, RETORNA VAZIO.
-    if request.user.is_authenticated:
-        exercicios = Exercicio.objects.filter(usuario=request.user)
-    else:
-        exercicios = []
+    if not exercicios_usuario.exists():
+        return render(request, 'home/montar_ficha.html', {'sem_exercicios': True})
         
-    return render(request, "home/index.html", {
-        "mensagens": mensagens, 
-        "exercicios": exercicios
+    if request.method == 'POST':
+        nome_ficha = request.POST.get('nome')
+        descricao = request.POST.get('descricao')
+        
+        # 1. Cria a Ficha
+        ficha = FichaTreino.objects.create(
+            utilizador=request.user,
+            nome=nome_ficha,
+            descricao=descricao
+        )
+        
+        # 2. Captura a lista de IDs do formulário
+        exercicios_ids = request.POST.getlist('exercicios_selecionados')
+        
+        # 3. Percorre criando os vínculos explicitamente por ID numérico
+        for ex_id in exercicios_ids:
+            # Buscamos direto pelo ID numérico enviado convertendo para int
+            try:
+                exercicio_obj = Exercicio.objects.get(id=int(ex_id))
+                
+                v_series = request.POST.get(f'series_{ex_id}') or "3"
+                v_repeticoes = request.POST.get(f'repeticoes_{ex_id}') or "10"
+                v_carga = request.POST.get(f'carga_{ex_id}') or "0"
+                
+                ItemFichaTreino.objects.create(
+                    ficha=ficha,
+                    exercicio=exercicio_obj,
+                    series=int(v_series),
+                    repeticoes=str(v_repeticoes),
+                    carga=int(v_carga)
+                )
+            except (Exercicio.DoesNotExist, ValueError):
+                continue
+                
+        return redirect('index')
+
+    return render(request, 'home/montar_ficha.html', {
+        'exercicios': exercicios_usuario,
+        'sem_exercicios': False
     })
 
+@login_required
+def index(request):
+    exercicios = Exercicio.objects.filter(usuario=request.user)
+    mensagens = Mensagem.objects.all()
+    
+    # Mudamos o prefetch para carregar usando o relacionamento reverso correto do model ItemFichaTreino
+    fichas = FichaTreino.objects.filter(utilizador=request.user).prefetch_related('itens__exercicio')
+
+    return render(request, 'home/index.html', {
+        'exercicios': exercicios,
+        'mensagens': mensagens,
+        'fichas': fichas,
+    })
+
+
+@login_required
+def deletar_ficha(request, pk):
+    # Garante que o usuário só consiga deletar as próprias fichas
+    ficha = get_object_or_404(FichaTreino, pk=pk, utilizador=request.user)
+    
+    if request.method == 'POST':
+        ficha.delete()
+        return redirect('index')
+        
+    # Se o usuário tentar acessar via GET (pela barra de endereço), 
+    # podemos renderizar uma página simples de confirmação ou apenas mandar direto para o index
+    return render(request, 'home/deletar_confirmacao.html', {'objeto': ficha, 'tipo': 'ficha'})
 
 def sobre(request):                                   
     return render(request, "home/sobre.html")
