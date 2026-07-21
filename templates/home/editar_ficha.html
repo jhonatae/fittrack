@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Ficha - FitTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-teal-950 to-slate-950 min-h-screen text-white">
+
+    <div class="container mx-auto px-6 py-12 max-w-3xl">
+        <h1 class="text-3xl font-bold mb-8">📝 Editar Ficha de Treino</h1>
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="bg-white/5 border border-white/10 rounded-xl p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Nome da Ficha</label>
+                    <input type="text" name="nome" value="{{ ficha.nome }}" required 
+                           class="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-400">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Descrição / Observações</label>
+                    <textarea name="descricao" rows="2" class="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-400">{{ ficha.descricao }}</textarea>
+                </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 text-emerald-400">Configure os Exercícios</h3>
+                <div class="space-y-3">
+                    {% for ex in exercicios %}
+                        {% if ex.id in exercicios_na_ficha %}
+                            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-3 gap-3">
+                                <label class="flex items-center gap-3 cursor-pointer flex-1">
+                                    <input type="checkbox" name="exercicios_selecionados" value="{{ ex.id }}" checked class="w-4 h-4 rounded bg-slate-900 border-white/10 text-emerald-500 focus:ring-0">
+                                    <div>
+                                        <span class="font-medium block">{{ ex.nome }}</span>
+                                    </div>
+                                </label>
+                                
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    {% with item=exercicios_na_ficha|default:ex.id %}
+                                    <input type="number" name="series_{{ ex.id }}" value="3" class="w-14 bg-slate-900 border border-white/10 rounded px-2 py-1 text-center">
+                                    <span>x</span>
+                                    <input type="text" name="repeticoes_{{ ex.id }}" value="10" class="w-16 bg-slate-900 border border-white/10 rounded px-2 py-1 text-center">
+                                    <input type="number" name="carga_{{ ex.id }}" value="0" class="w-16 bg-slate-900 border border-white/10 rounded px-2 py-1 text-center">
+                                    <span class="text-xs text-slate-500">kg</span>
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-3 gap-3 opacity-60">
+                                <label class="flex items-center gap-3 cursor-pointer flex-1">
+                                    <input type="checkbox" name="exercicios_selecionados" value="{{ ex.id }}" class="w-4 h-4 rounded bg-slate-900 border-white/10 text-emerald-500 focus:ring-0">
+                                    <div>
+                                        <span class="font-medium block">{{ ex.nome }}</span>
+                                    </div>
+                                </label>
+                                
+                                <div class="flex items-center gap-2 text-sm text-slate-300">
+                                    <input type="number" name="series_{{ ex.id }}" value="3" class="w-14 bg-slate-900 border border-white/10 rounded px-2 py-1 text-center">
+                                    <span>x</span>
+                                    <input type="text" name="repeticoes_{{ ex.id }}" value="10" class="w-16 bg-slate-900 border border-white/10 rounded px-2 py-1 text-center">
+                                    <input type="number" name="carga_{{ ex.id }}" value="0" class="w-16 bg-slate-900 border border-white/10 rounded px-2 py-1 text-center">
+                                    <span class="text-xs text-slate-500">kg</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <a href="{% url 'index' %}" class="px-5 py-2.5 rounded-lg border border-white/10 text-slate-300 hover:bg-white/5 transition">Cancelar</a>
+                <button type="submit" class="px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold transition">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

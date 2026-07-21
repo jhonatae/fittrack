@@ -172,3 +172,48 @@ def deletar_exercicio(request, pk):
 def logout_usuario(request):
     auth_logout(request)
     return redirect('index')
+
+@login_required
+def editar_ficha(request, pk):
+    ficha = get_object_or_404(FichaTreino, pk=pk, utilizador=request.user)
+    exercicios_usuario = Exercicio.objects.filter(usuario=request.user)
+    
+    # Pega os exercícios que já estão na ficha atualmente para marcar no HTML
+    itens_atuais = ficha.itens.all()
+    exercicios_na_ficha = {item.exercicio_id: item for item in itens_atuais}
+
+    if request.method == 'POST':
+        ficha.nome = request.POST.get('nome')
+        ficha.descricao = request.POST.get('descricao')
+        ficha.save()
+
+        # Atualiza os exercícios da ficha
+        exercicios_ids = request.POST.getlist('exercicios_selecionados')
+        
+        # Para facilitar, deletamos os itens antigos e criamos os novos atualizados
+        ficha.itens.all().delete()
+
+        for ex_id in exercicios_ids:
+            try:
+                exercicio_obj = Exercicio.objects.get(id=int(ex_id))
+                v_series = request.POST.get(f'series_{ex_id}') or "3"
+                v_repeticoes = request.POST.get(f'repeticoes_{ex_id}') or "10"
+                v_carga = request.POST.get(f'carga_{ex_id}') or "0"
+                
+                ItemFichaTreino.objects.create(
+                    ficha=ficha,
+                    exercicio=exercicio_obj,
+                    series=int(v_series),
+                    repeticoes=str(v_repeticoes),
+                    carga=int(v_carga)
+                )
+            except (Exercicio.DoesNotExist, ValueError):
+                continue
+
+        return redirect('index')
+
+    return render(request, 'home/editar_ficha.html', {
+        'ficha': ficha,
+        'exercicios': exercicios_usuario,
+        'exercicios_na_ficha': exercicios_na_ficha,
+    })

@@ -12,7 +12,9 @@ class Mensagem(models.Model):
 
     def __str__(self):
         return self.titulo
-
+    class Meta:
+        verbose_name = "Mensagem"
+        verbose_name_plural = "Mensagens"
 # --- NOVO MODELO PARA O FITTRACK ---
 class Exercicio(models.Model):
     GRUPOS_MUSCULARES = [
@@ -100,7 +102,7 @@ class HistoricoTreino(models.Model):
     realizado_em = models.DateTimeField(auto_now_add=True)
     duracao_minutos = models.PositiveIntegerField(default=45, verbose_name="Duração (minutos)")
     comentarios = models.TextField(blank=True, null=True, verbose_name="Notas de Execução")
-
+    
     class Meta:
         ordering = ["-realizado_em"]
         verbose_name = "Histórico de Treino"
